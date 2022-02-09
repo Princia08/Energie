@@ -44,6 +44,7 @@ public class Service {
 	
 	public Double[] getTotalJour(String heureDebut,String heureFin)
 	{
+		System.out.println(heureDebut);
 		Double totalMatin=0.0;
 		Double totalSoir=0.0;
 		Double [] retour =new Double [2];
@@ -53,12 +54,46 @@ public class Service {
 		LocalTime limiteDebut= LocalTime.parse(heureLimiteDebut);
 		LocalTime limiteFin= LocalTime.parse(heureLimiteFin);
 		
-		if((localDebut.isBefore(limiteDebut) && localFin.isBefore(limiteDebut)) ||
+		
+		if(localDebut.isBefore(limiteDebut) && localFin.isAfter(limiteFin)) {
+			System.out.println(0);
+			totalMatin=12.0;
+			totalSoir +=getDiffHour(heureDebut,heureLimiteDebut);
+			totalSoir +=getDiffHour(heureLimiteFin,heureFin);
+		}
+		else if((localDebut.isBefore(limiteDebut) && localFin.isBefore(limiteDebut)) || (localDebut.isAfter(limiteFin) && localFin.isAfter(limiteFin))) {
+			System.out.println(1);
+			totalSoir=getDiffHour(heureDebut,heureFin);
+		}
+		else if(
+				( localDebut.isAfter(limiteDebut) || localDebut.equals(limiteDebut) ) 
+				&& ( localFin.isBefore(limiteFin))
+				) {
+			System.out.println(2);
+			totalMatin=getDiffHour(heureDebut,heureFin);
+		}
+		else if( localDebut.isBefore(limiteDebut)
+				&& ( localFin.isAfter(limiteDebut) || localFin.equals(limiteDebut) )
+				) {
+			System.out.println(3);
+			totalSoir=getDiffHour(heureDebut,heureLimiteDebut);
+			totalMatin=getDiffHour(heureLimiteDebut,heureFin);	
+		}
+		else if( (localDebut.isAfter(limiteDebut) || localDebut.equals(limiteDebut)) 
+				&& ( localFin.isAfter(limiteDebut) || localFin.equals(limiteDebut))
+				) {
+			System.out.println(4);
+			totalMatin=getDiffHour(heureDebut,heureLimiteFin);
+			totalSoir=getDiffHour(heureLimiteFin,heureFin);
+		}
+		
+		
+		/*if((localDebut.isBefore(limiteDebut) && localFin.isBefore(limiteDebut)) ||
 		(localDebut.isAfter(limiteFin) && localFin.isAfter(limiteFin)))
 		{
 			System.out.print("heureFin" +heureFin+ "\n");
 			String finTemp="";
-			if(heureFin.equalsIgnoreCase("23:59"))
+			/*if(heureFin.equalsIgnoreCase("23:59"))
 				heureDebut= localDebut.minusMinutes(1)+"";
 			//System.out.print("debutTemp "+debutTemp+"\n");
 			
@@ -90,7 +125,7 @@ public class Service {
 			totalSoir +=getDiffHour(heureDebut,heureLimiteDebut);
 			totalSoir +=getDiffHour(heureLimiteFin,heureFin);
 			
-		}
+		}*/
 		retour[0] = totalMatin;
 		retour[1] = totalSoir;
 		return retour;
@@ -106,6 +141,10 @@ public class Service {
 	
 	public void setTotalHeure(Appareil ap) {
 		ArrayList<Appareil> liste=this.getAllHour(ap.getHeureDebut(), ap.getHeureFin());
+		int i=0;
+		if(getDiffHour(ap.getHeureDebut(),ap.getHeureFin())<0) {
+			i=1;
+		}
 		for(Appareil app: liste) {
 			Double totalJour = getTotalJour(app.getHeureDebut(),app.getHeureFin())[0];
 			Double totalSoir = getTotalJour(app.getHeureDebut(),app.getHeureFin())[1];
