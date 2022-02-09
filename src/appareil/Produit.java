@@ -1,5 +1,10 @@
 package appareil;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 public class Produit {
 	
 	String id;
@@ -47,6 +52,20 @@ public class Produit {
 		this.price = price;
 	}
 	
-	
+	public void findNecessaire() {
+		try{  
+			   String url="jdbc:ucanaccess://D://itu//S5//Mr Tahiana//Access//Energie.accdb";  
+			   //Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");  
+			   Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
+			   Connection c=DriverManager.getConnection(url);  
+			   Statement st=c.createStatement();  
+			   ResultSet rs=st.executeQuery("select * from produit");  
+			   
+			   while(rs.next()){  
+			    System.out.println(rs.getString(1));  
+			   }  
+			  
+			}catch(Exception ee){System.out.println(ee);}
+	}
 	
 }
